@@ -46,12 +46,10 @@
   const localDemoKey = "harbor-demo:" + location.pathname;
 
   function validConfig(c) {
-    if (
-      !c ||
-      !/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(c.url) ||
-      !/^([0-9a-f]{64})$/.test(c.token)
-    )
-      throw Error("URL หรือรหัสพื้นที่ทำงานไม่ถูกต้อง");
+    if (!c) throw Error("กรุณาระบุ Project URL และ Public key");
+    const url = D.projectUrl(c.url);
+    if (!/^([0-9a-f]{64})$/.test(c.token))
+      throw Error("รหัสพื้นที่ทำงานไม่ถูกต้อง กรุณาเปิดลิงก์ทีมเต็มอีกครั้ง");
     if (typeof c.key !== "string" || c.key.startsWith("sb_secret_"))
       throw Error(
         "ใช้ Publishable key หรือ anon key เท่านั้น ห้ามใช้ service_role/secret key",
@@ -70,7 +68,7 @@
     }
     if (c.key.length < 20 || c.key.length > 3000)
       throw Error("Public key ไม่ถูกต้อง");
-    return c;
+    return { ...c, url };
   }
   function parseLink() {
     const match = location.hash.match(/^#join=([A-Za-z0-9_-]+)$/);
@@ -609,8 +607,9 @@
       submit.disabled = true;
       $("#connect-error").hidden = true;
       try {
-        const url = $("#supabase-url").value.trim().replace(/\/$/, ""),
+        const url = D.projectUrl($("#supabase-url").value),
           key = $("#supabase-key").value.trim();
+        $("#supabase-url").value = url;
         const previous = [config, readRemembered()].find(
           (c) => c?.url === url && c?.key === key,
         );

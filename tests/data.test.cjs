@@ -5,6 +5,15 @@ const row=(more={})=>({job:'Job 1',invoice:'INV1',container:'ABC1',cartons:100,c
 const headers=D.FIELDS.map(([k,v])=>v);
 const source=r=>D.FIELDS.map(([k])=>k==='received'?'2026-09-25 09:00:00 2026-09-27 14:30:00':r[k]??'');
 
+test('project URL accepts copied Data API endpoints and rejects unrelated URLs',()=>{
+  for(const input of ['https://demo-project.supabase.co','https://demo-project.supabase.co/','https://demo-project.supabase.co/rest/v1',' https://demo-project.supabase.co/rest/v1/ ']) {
+    assert.equal(D.projectUrl(input),'https://demo-project.supabase.co');
+  }
+  for(const input of ['http://demo-project.supabase.co','https://demo-project.supabase.co.evil.test','https://user:pass@demo-project.supabase.co','https://demo-project.supabase.co:1234','https://demo-project.supabase.co/rest/v1/rpc/test','https://demo-project.supabase.co?apikey=example','https://demo-project.supabase.co/#example','not a url']) {
+    assert.throws(()=>D.projectUrl(input),/Project URL/);
+  }
+});
+
 test('date formats and impossible dates',()=>{
   assert.equal(D.dateValue(20261001),'2026-10-01T00:00:00');
   assert.equal(D.dateValue('1/10/2026'),'2026-10-01T00:00:00');

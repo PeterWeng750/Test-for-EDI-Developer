@@ -64,6 +64,29 @@
       day: "2-digit",
     }).format(new Date());
 
+  function projectUrl(value) {
+    const message =
+      "กรุณาใช้ Project URL เช่น https://ชื่อโปรเจกต์.supabase.co (รองรับ URL ที่ลงท้าย /rest/v1/ ด้วย)";
+    let url;
+    try {
+      url = new URL(String(value ?? "").trim());
+    } catch {
+      throw Error(message);
+    }
+    if (
+      url.protocol !== "https:" ||
+      !/^[a-z0-9-]+\.supabase\.co$/.test(url.hostname) ||
+      url.port ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash ||
+      !/^\/(?:rest\/v1\/?)?$/.test(url.pathname)
+    )
+      throw Error(message);
+    return url.origin;
+  }
+
   function dateValue(value, date1904 = false) {
     if (value == null || value === "") return "";
     if (value instanceof Date) {
@@ -485,6 +508,7 @@
     stable,
     label,
     today,
+    projectUrl,
     dateValue,
     parseSheets,
     fields,

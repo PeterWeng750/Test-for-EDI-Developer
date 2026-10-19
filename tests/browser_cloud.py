@@ -107,10 +107,11 @@ def run():
 
             # Shared mode: one workspace, two independent browsers, real database.
             page.locator('#connection-settings').click()
-            page.locator('#supabase-url').fill('https://harbor-test.supabase.co')
+            page.locator('#supabase-url').fill('https://harbor-test.supabase.co/rest/v1/')
             page.locator('#supabase-key').fill('sb_publishable_test_key_for_browser_only')
             page.locator('#connect-submit').click()
             expect(page.locator('#connection-badge')).to_have_text('ข้อมูลร่วมกัน · Supabase Free')
+            expect(page.locator('#supabase-url')).to_have_value('https://harbor-test.supabase.co')
             expect(page.locator('#nav-count')).to_have_text('0')
             shared_link=page.url
             assert '#join=' in shared_link

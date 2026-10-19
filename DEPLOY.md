@@ -27,7 +27,7 @@ URL ตามชื่อ repository ควรเป็น `https://peterweng750
 3. ใน Project เปิด **SQL Editor → New query**
 4. ที่หน้า Harbor กด **คัดลอก SQL สำหรับติดตั้ง** นำไปวางใน SQL Editor แล้วกด **Run** หรือคัดลอกไฟล์ supabase/schema.sql จาก GitHub ทั้งหมด
 5. หา **Project URL** และ **Publishable key** จากหน้า **Connect** หรือ **Settings → API Keys** ตามหน้าตาของ Supabase บัญชีนั้น หากใช้ legacy API key ให้เลือก **anon/public** เท่านั้น
-6. ใส่ Project URL และ Public key ในหน้า Harbor แล้วกด **สร้างพื้นที่ทำงานและลิงก์ทีม**
+6. ใส่ Project URL และ Public key ในหน้า Harbor แล้วกด **สร้างพื้นที่ทำงานและลิงก์ทีม** หากคัดลอก URL จาก Data API ที่ลงท้าย `/rest/v1/` สามารถวางได้ ระบบจะปรับเป็น URL หลักของโปรเจกต์อัตโนมัติ
 7. เมื่อแถบด้านบนแสดง **ข้อมูลร่วมกัน · Supabase Free** ให้นำเข้า Excel และยืนยันบันทึก
 8. กด **คัดลอกลิงก์ทีม** ส่งให้เพื่อนร่วมงาน ลิงก์เต็มมี `#join=...` ทุกคนที่มีลิงก์นี้ใช้ข้อมูลเดียวกันได้และมีสิทธิ์อัปโหลด/อัปเดตด้วย
 
