@@ -1,0 +1,10 @@
+.git
+.venv
+data
+__pycache__
+tests
+test-results
+*.xlsx
+*.csv
+*.sqlite3*
+.env

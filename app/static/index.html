@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#12695d" />
+    <title>Harbor — Import Operations</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Harbor หน้าหลัก"
+        ><span class="brand-mark">h<span>·</span></span
+        ><span
+          >harbor<span class="brand-caption">IMPORT OPERATIONS</span></span
+        ></a
+      >
+      <div class="workspace">
+        <span class="workspace-icon">W</span>
+        <div>Shared workspace<small>พื้นที่ทำงานร่วมกัน</small></div>
+        <span class="live-dot"></span>
+      </div>
+      <div class="nav-label">WORKSPACE</div>
+      <nav aria-label="เมนูหลัก">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">▦</span>ภาพรวม Dashboard
+        </button>
+        <button class="nav-item" data-view="records">
+          <span class="nav-icon">▤</span>ข้อมูลการนำเข้า
+          <span id="nav-count" class="nav-count">0</span>
+        </button>
+        <button class="nav-item" data-view="history">
+          <span class="nav-icon">↺</span>ประวัติการอัปโหลด
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-card">
+          <span class="help-icon">→</span><strong>ทุกข้อมูล ในที่เดียว</strong>
+          <p>อัปโหลด Excel แล้วติดตาม<br />งานนำเข้าของทีมได้ทันที</p>
+          <button id="help-button">วิธีใช้งาน <span>→</span></button>
+        </div>
+        <div class="shared-note">
+          <span class="live-dot"></span>ทุกคนในลิงก์เห็นข้อมูลร่วมกัน
+        </div>
+        <small class="version">HARBOR / DEMO V1.0</small>
+      </div>
+    </aside>
+    <div class="main-shell">
+      <header class="topbar">
+        <div class="breadcrumb">
+          Workspace <span>/</span>
+          <strong id="breadcrumb-current">ภาพรวม</strong>
+        </div>
+        <div class="topbar-right">
+          <span class="prototype">รุ่นทดลอง</span><span class="avatar">TM</span>
+        </div>
+      </header>
+      <main>
+        <section class="page-heading">
+          <div>
+            <div class="eyebrow">YOUR OPERATIONS, AT A GLANCE</div>
+            <h1 id="page-title">
+              ภาพรวมการนำเข้า<span class="heading-dot">.</span>
+            </h1>
+            <p id="page-subtitle">
+              ติดตามทุกขั้นตอน ตั้งแต่ต้นทางจนถึงการส่งมอบ
+            </p>
+          </div>
+          <div class="heading-actions">
+            <div class="export-wrap">
+              <button id="export-toggle" class="button secondary">
+                <span>↓</span> Export report <span class="chevron">⌄</span>
+              </button>
+              <div id="export-menu" class="dropdown" hidden>
+                <button data-export="xlsx">
+                  Excel (.xlsx)<small>พร้อมชีตยอดรวมต่อ Job</small></button
+                ><button data-export="csv">
+                  CSV (.csv)<small>รายละเอียดตามตัวกรอง</small></button
+                ><button data-export="pdf">
+                  PDF / พิมพ์<small>สรุป Dashboard พร้อมกราฟ</small>
+                </button>
+              </div>
+            </div>
+            <button class="button primary" data-import>
+              <span>＋</span> อัปโหลด Excel
+            </button>
+          </div>
+        </section>
+        <div class="status-line">
+          <span class="live-dot"></span
+          ><span id="last-updated">พร้อมรับข้อมูลจาก Excel</span
+          ><button id="refresh" aria-label="รีเฟรชข้อมูล">↻</button
+          ><span class="status-spacer"></span><span>เวลาประเทศไทย · ICT</span>
+        </div>
+        <div id="error-banner" class="error-banner" hidden role="alert"></div>
+        <section id="filter-section" class="filters" aria-label="ตัวกรองข้อมูล">
+          <div class="filter-main">
+            <label class="search-control"
+              ><span>⌕</span
+              ><input
+                id="search"
+                type="search"
+                placeholder="ค้นหา Job, Invoice, หมายเลขตู้…"
+                aria-label="ค้นหาข้อมูล"
+            /></label>
+            <div class="date-filter">
+              <select id="date-field" aria-label="ประเภทวันที่"></select
+              ><input
+                id="date-from"
+                type="date"
+                aria-label="วันที่เริ่มต้น"
+              /><span>—</span
+              ><input id="date-to" type="date" aria-label="วันที่สิ้นสุด" />
+            </div>
+            <button
+              id="more-filters"
+              class="button filter-button"
+              aria-expanded="false"
+            >
+              ☷ <span>ตัวกรองเพิ่มเติม</span><span id="filter-count"></span>
+            </button>
+          </div>
+          <div class="filter-secondary">
+            <label
+              >สายเรือ
+              <select id="filter-carrier">
+                <option value="">ทั้งหมด</option>
+              </select></label
+            ><label
+              >สถานะ
+              <select id="filter-status">
+                <option value="">ทุกสถานะ</option>
+                <option value="pending">ยังไม่ส่งมอบ</option>
+                <option value="overdue">เกินกำหนดส่ง</option>
+                <option value="delivered">ส่งมอบแล้ว</option>
+                <option value="late">ส่งมอบล่าช้า</option>
+              </select></label
+            ><span id="result-label">ข้อมูลทั้งหมด</span
+            ><button id="clear-filters" class="text-button">ล้างตัวกรอง</button>
+          </div>
+          <div id="advanced-filters" hidden>
+            <div class="advanced-title">
+              กรองตาม Header
+              <small>ข้อความค้นหาแบบมีคำนี้อยู่ · จำนวนค้นหาแบบตรงค่า</small>
+            </div>
+            <div id="advanced-fields" class="advanced-grid"></div>
+          </div>
+        </section>
+        <section id="empty-state" class="empty-state" hidden>
+          <div class="empty-visual">
+            <div class="file-illustration">
+              <span>X</span><i></i><i></i><i></i>
+            </div>
+            <span class="empty-plus">＋</span>
+          </div>
+          <div class="eyebrow">LET’S GET STARTED</div>
+          <h2>เริ่มต้นจากไฟล์ Excel ของคุณ</h2>
+          <p>
+            รวมข้อมูลนำเข้า สรุปงาน และติดตามการส่งมอบ<br />เพียงอัปโหลดไฟล์
+            แล้วตรวจสอบข้อมูลก่อนบันทึก
+          </p>
+          <button class="button primary" data-import>＋ อัปโหลดไฟล์แรก</button>
+          <div class="empty-features">
+            <span>✓ ตรวจสอบข้อมูลซ้ำ</span><span>✓ เก็บข้อมูลต่อเนื่อง</span
+            ><span>✓ Export รายงานได้</span>
+          </div>
+        </section>
+        <section id="dashboard-view" class="view">
+          <div class="section-label">
+            OVERVIEW <span>สรุปตามตัวกรองที่เลือก</span>
+          </div>
+          <div class="kpi-grid" id="kpi-grid"></div>
+          <div class="totals-strip">
+            <span>ปริมาณสินค้าของ Job ที่พบ</span
+            ><strong id="total-cartons">—</strong><span>Cartons</span><i></i
+            ><strong id="total-cbm">—</strong><span>CBM</span
+            ><small>นับยอดเต็มเพียงครั้งเดียวต่อ Job</small>
+          </div>
+          <div class="chart-grid">
+            <article class="card trend-card">
+              <div class="card-heading">
+                <div>
+                  <h2>แนวโน้มงานนำเข้า</h2>
+                  <p>จำนวน Job แยกตามวันที่ ATA</p>
+                </div>
+                <span class="subtle-tag">รายวัน</span>
+              </div>
+              <div id="trend-chart" class="trend-chart"></div>
+              <div class="chart-foot">
+                <span class="legend-dot teal"></span> จำนวนงาน
+                <small
+                  >แต่ละวันนับ Job ไม่ซ้ำ · สูงสุด 30
+                  วันที่มีข้อมูลล่าสุด</small
+                >
+              </div>
+            </article>
+            <article class="card delivery-card">
+              <div class="card-heading">
+                <div>
+                  <h2>การส่งมอบ</h2>
+                  <p>สถานะของรายการ Job × Invoice × ตู้</p>
+                </div>
+                <span class="small-icon">◷</span>
+              </div>
+              <div id="delivery-chart"></div>
+              <div id="delivery-legend" class="delivery-legend"></div>
+            </article>
+          </div>
+          <div class="chart-grid bottom-grid">
+            <article class="card">
+              <div class="card-heading">
+                <div>
+                  <h2>ปริมาณตู้ตามสายเรือ</h2>
+                  <p>นับหมายเลขตู้ไม่ซ้ำภายในแต่ละสายเรือ</p>
+                </div>
+                <span class="subtle-tag">TOP 5</span>
+              </div>
+              <div id="carrier-chart" class="bar-chart"></div>
+            </article>
+            <article class="card">
+              <div class="card-heading">
+                <div>
+                  <h2>ระยะเวลาในแต่ละขั้นตอน</h2>
+                  <p>เฉลี่ยต่อ Job · หน่วยวัน</p>
+                </div>
+                <span class="small-icon">→</span>
+              </div>
+              <div id="lead-chart" class="bar-chart"></div>
+              <div class="chart-note">
+                ใช้วันแรกถึงวันสุดท้ายของ Job ·
+                ไม่รวมช่วงวันที่ย้อนกลับหรือข้อมูลไม่ครบ
+              </div>
+            </article>
+          </div>
+          <article class="card attention-card">
+            <div class="card-heading">
+              <div>
+                <h2><span class="attention-dot"></span> รายการที่ต้องติดตาม</h2>
+                <p>
+                  ยังไม่ส่งมอบและเลย Delivery Plan ณ <span id="as-of"></span>
+                </p>
+              </div>
+              <button id="view-overdue" class="text-button">ดูทั้งหมด →</button>
+            </div>
+            <div id="attention-table" class="table-scroll"></div>
+          </article>
+          <div class="data-note">
+            ⓘ Cartons และ CBM เป็นยอดต่อ Job จึงไม่รวมซ้ำตามจำนวนตู้หรือ Invoice
+            ส่วนวันส่งจริงที่ว่างถือว่ายังไม่ส่งมอบ
+          </div>
+        </section>
+        <section id="records-view" class="view" hidden>
+          <article class="card">
+            <div class="card-heading">
+              <div>
+                <h2>รายการนำเข้าทั้งหมด</h2>
+                <p>เลือกแถวเพื่อดูรายละเอียดครบทุก Header</p>
+              </div>
+              <label class="page-size"
+                >แสดง
+                <select id="page-size">
+                  <option>20</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+                แถว</label
+              >
+            </div>
+            <div id="records-table" class="table-scroll"></div>
+            <div class="pagination">
+              <span id="page-summary"></span>
+              <div>
+                <button id="prev-page" class="button secondary">
+                  ← ก่อนหน้า</button
+                ><button id="next-page" class="button secondary">
+                  ถัดไป →
+                </button>
+              </div>
+            </div>
+          </article>
+          <div class="data-note">
+            ⓘ จำนวนตู้จากไฟล์แสดงในรายละเอียด ส่วนตัวเลขสรุปใช้หมายเลขตู้ไม่ซ้ำ
+            · Cartons/CBM เป็นยอดเต็มต่อ Job
+          </div>
+        </section>
+        <section id="history-view" class="view" hidden>
+          <article class="card">
+            <div class="card-heading">
+              <div>
+                <h2>ประวัติการอัปโหลด</h2>
+                <p>
+                  100 ครั้งล่าสุด · เลือกรายการเพื่อดูข้อมูลก่อนและหลังการอัปเดต
+                </p>
+              </div>
+              <span class="subtle-tag">SHARED HISTORY</span>
+            </div>
+            <div id="history-table" class="table-scroll"></div>
+          </article>
+        </section>
+        <footer>
+          <span><strong>harbor</strong> &nbsp; ความชัดเจนในทุกการนำเข้า</span
+          ><span>Shared workspace · ข้อมูลบันทึกอัตโนมัติหลังยืนยันนำเข้า</span>
+        </footer>
+      </main>
+    </div>
+    <dialog id="import-dialog">
+      <form method="dialog" class="dialog-top">
+        <div>
+          <div class="eyebrow">IMPORT DATA</div>
+          <h2>อัปโหลดข้อมูล Excel</h2>
+        </div>
+        <button class="close-button" aria-label="ปิด">×</button>
+      </form>
+      <div class="dialog-body">
+        <div class="steps">
+          <span class="active" id="step-one">1 <b>เลือกไฟล์</b></span
+          ><i></i><span id="step-two">2 <b>ตรวจสอบ</b></span
+          ><i></i><span id="step-three">3 <b>บันทึก</b></span>
+        </div>
+        <div id="upload-area">
+          <label id="drop-zone" class="drop-zone" for="file-input"
+            ><span class="upload-icon">↥</span
+            ><strong>ลากไฟล์มาวางที่นี่</strong
+            ><span>หรือ <u>เลือกไฟล์จากเครื่อง</u></span
+            ><small>Excel .xlsx · ไม่เกิน 10 MB / 10,000 แถวต่อไฟล์</small
+            ><input type="file" id="file-input" accept=".xlsx" hidden
+          /></label>
+          <div class="import-tip">
+            ไฟล์ใหม่จะเพิ่มต่อจากข้อมูลเดิม ระบบตรวจ Job + Invoice + หมายเลขตู้
+            และให้ยืนยันก่อนอัปเดตรายการที่เปลี่ยนแปลง
+          </div>
+        </div>
+        <div id="import-loading" class="loading-panel" hidden>
+          <div class="spinner"></div>
+          <h3>กำลังตรวจสอบไฟล์</h3>
+          <p>อ่านข้อมูล ตรวจ Header และเปรียบเทียบกับรายการเดิม…</p>
+        </div>
+        <div id="import-preview" hidden></div>
+        <div id="import-error" class="error-banner" hidden role="alert"></div>
+      </div>
+      <div class="dialog-footer">
+        <button id="import-back" class="button secondary" hidden>
+          เลือกไฟล์ใหม่</button
+        ><span id="import-footer-note"
+          >ทุกคนในพื้นที่ทำงานจะเห็นข้อมูลที่นำเข้า</span
+        ><button id="confirm-import" class="button primary" hidden>
+          ยืนยันนำเข้าข้อมูล →
+        </button>
+      </div>
+    </dialog>
+    <dialog id="detail-dialog">
+      <form method="dialog" class="dialog-top">
+        <div>
+          <div class="eyebrow">RECORD DETAILS</div>
+          <h2 id="detail-title">รายละเอียด</h2>
+        </div>
+        <button class="close-button" aria-label="ปิด">×</button>
+      </form>
+      <div id="detail-body" class="dialog-body"></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
