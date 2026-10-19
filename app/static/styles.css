@@ -1981,3 +1981,236 @@ dialog::backdrop {
     font-size: 10px;
   }
 }
+
+/* Free static-hosting setup and shared workspace controls. */
+.cloud-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cloud-controls .button {
+  font-size: 10px;
+  min-height: 32px;
+  padding: 7px 11px;
+}
+.cloud-controls .prototype {
+  color: #47765e;
+  background: #f1f7ed;
+  border-color: #e0ebda;
+}
+.cloud-controls .text-button {
+  font-size: 10px;
+  white-space: nowrap;
+}
+html[data-runtime="cloud"] .topbar-right > .prototype {
+  display: none;
+}
+.setup-screen {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 32px;
+  margin: 0 auto 26px;
+  max-width: 950px;
+}
+.setup-screen > p {
+  font-size: 12px;
+  color: #74856e;
+  line-height: 1.9;
+  margin: 12px 0 24px;
+}
+.setup-screen h1 {
+  font-size: 27px;
+}
+.setup-screen h2 {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.8;
+}
+.setup-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 25px 0;
+}
+.setup-columns article {
+  border: 1px solid #e4ecdf;
+  background: #f8faf5;
+  border-radius: 9px;
+  padding: 22px;
+}
+.setup-columns h2 {
+  margin: 10px 0;
+}
+.setup-columns p,
+#connect-form > p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #7d8c74;
+}
+.setup-number {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  background: #e1f0db;
+  color: var(--green);
+  margin-right: 6px;
+}
+.setup-columns small {
+  display: block;
+  font-size: 11px;
+  color: #478458;
+  line-height: 1.8;
+  margin-top: 10px;
+}
+#connect-form {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+#connect-form label {
+  display: block;
+  font-size: 11px;
+  color: #708368;
+  margin: 17px 0;
+}
+#connect-form input {
+  display: block;
+  width: 100%;
+  border: 1px solid #dfe8d8;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 7px;
+  background: #fff;
+  font-size: 12px;
+  color: var(--ink);
+}
+#connect-form > small {
+  font-size: 10px;
+  color: #98a18c;
+  line-height: 1.8;
+}
+.setup-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.setup-screen .setup-footnote {
+  font-size: 10px;
+  color: #99a58d;
+  margin-bottom: 0;
+}
+.demo-banner {
+  padding: 11px 15px;
+  font-size: 11px;
+  line-height: 1.8;
+  border: 1px solid #ecdfb9;
+  background: #fff9eb;
+  border-radius: 7px;
+  color: #987b40;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+body[data-connection="setup"] main > :not(#setup-screen):not(footer) {
+  display: none !important;
+}
+body[data-connection="setup"] .sidebar nav {
+  pointer-events: none;
+  opacity: 0.45;
+}
+body[data-connection="setup"] .heading-actions {
+  display: none;
+}
+body[data-connection="demo"] .status-line .live-dot {
+  background: #cca14d;
+}
+body[data-connection="demo"] .sidebar .workspace .live-dot {
+  background: #cca14d;
+}
+@media (max-width: 980px) {
+  .cloud-controls {
+    gap: 8px;
+  }
+  .setup-screen {
+    padding: 24px;
+  }
+  .setup-columns {
+    gap: 12px;
+  }
+  .setup-columns article {
+    padding: 17px;
+  }
+}
+@media (max-width: 650px) {
+  html[data-runtime="cloud"] .topbar {
+    height: auto;
+    min-height: 53px;
+    padding: 10px 16px;
+  }
+  html[data-runtime="cloud"] .topbar .breadcrumb,
+  html[data-runtime="cloud"] .topbar .avatar {
+    display: none;
+  }
+  html[data-runtime="cloud"] .topbar-right {
+    width: 100%;
+  }
+  .cloud-controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 7px;
+  }
+  .cloud-controls .prototype {
+    font-size: 8px;
+    max-width: 125px;
+    text-align: center;
+  }
+  .cloud-controls .button {
+    font-size: 9px;
+    padding: 6px 8px;
+  }
+  .setup-screen {
+    padding: 21px 17px;
+  }
+  .setup-screen h1 {
+    font-size: 23px;
+  }
+  .setup-columns {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .setup-columns article {
+    padding: 17px;
+  }
+  .setup-screen > p,
+  .setup-columns p,
+  #connect-form > p {
+    font-size: 11px;
+  }
+  #connect-form {
+    padding: 17px;
+  }
+  .setup-screen h2 {
+    font-size: 13px;
+  }
+  .setup-actions {
+    gap: 9px;
+  }
+  .setup-actions .button {
+    font-size: 10px;
+    padding: 9px;
+  }
+  .demo-banner {
+    font-size: 10px;
+  }
+}
+@media print {
+  .cloud-controls,
+  .setup-screen,
+  .demo-banner {
+    display: none !important;
+  }
+}

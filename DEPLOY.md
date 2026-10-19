@@ -1,31 +1,53 @@
-# นำ Harbor ขึ้น Render
+# เปิด Harbor ฟรีด้วย GitHub Pages + Supabase Free
 
-## สิ่งที่ต้องเตรียม
+ไม่ต้องสร้างบริการ Render และไม่ใช้ Blueprint แบบเสียเงินในรุ่นนี้ หากยังอยู่ที่หน้าขอบัตรของ Render ให้ Cancel และกลับมาตั้งค่าบน GitHub ตามด้านล่าง
 
-- บัญชี Render ที่เชื่อมต่อ GitHub repository นี้
-- Commit/push โค้ดจากชุดส่งมอบเข้า repository ก่อนสร้างบริการ (ไฟล์ข้อมูลจริงและฐานข้อมูลไม่อยู่ในชุดส่งมอบ)
-- เลือกแพ็กเกจ Web Service ที่รองรับ Persistent Disk; `render.yaml` ระบุ Starter และ disk 1 GB ตรวจสอบราคาปัจจุบันใน Render ก่อนยืนยัน ค่าใช้จ่ายจะเริ่มตามแพ็กเกจที่เลือก
+## 1. เปิด GitHub Pages
 
-## ขั้นตอน
+1. เข้า https://github.com/PeterWeng750/Test-for-EDI-Developer/settings/pages
+2. ใน Build and deployment เลือก Source: **Deploy from a branch**
+3. Branch เลือก **harbor-download**
+4. Folder เลือก **/docs** แล้วกด **Save**
+5. รอ GitHub deploy เสร็จ หน้า Settings → Pages จะแสดง URL จริงและสถานะพร้อมใช้งาน
 
-1. สร้างบัญชีที่ https://render.com แล้วเชื่อม GitHub repository `PeterWeng750/Test-for-EDI-Developer` ที่มีโค้ดชุดนี้
-2. ใน Render เลือก **New → Blueprint** แล้วเลือก repository และ branch ที่มีโค้ด
-3. ตรวจค่าใน `render.yaml`: runtime Python, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --proxy-headers`, `DATA_DIR=/var/data`, disk mount `/var/data`
-4. ยืนยันสร้างบริการ เมื่อสถานะเป็น Live ใช้ URL จริงที่ Render แสดง ซึ่งลงท้าย `.onrender.com` เป็นลิงก์แชร์ ไม่มี URL สาธารณะที่สร้างไว้ในโค้ดนี้
-5. ตรวจ `/api/health` ที่ URL นั้น ต้องได้ `status: ok` เปิดหน้าเว็บและอัปโหลด **ข้อมูลสมมติ** ที่สร้างด้วย `scripts/make_demo.py` บนเครื่องก่อน
-6. เปิดลิงก์ในเบราว์เซอร์อีกตัว ทดสอบว่าทั้งคู่เห็นข้อมูลเดียวกัน กรองและ Export Excel/CSV และใช้ Print → Save as PDF
-7. Restart บริการแล้วตรวจว่าข้อมูลยังอยู่ เพื่อยืนยัน disk บน Render จริง ก่อนนำเข้าข้อมูลใช้งาน
+URL ตามชื่อ repository ควรเป็น `https://peterweng750.github.io/Test-for-EDI-Developer/` แต่การมีโค้ดบน GitHub ยังไม่ยืนยันว่าหน้าเว็บเผยแพร่แล้ว ต้องดูสถานะจาก Pages หลังเปิดใช้งาน
 
-## หากสร้าง Web Service ด้วยตัวเอง
+หากเลือก branch ไม่พบ ให้รีเฟรชหน้าและตรวจว่ามี branch harbor-download บน GitHub แล้ว หาก Pages ขอแพ็กเกจเสียเงินเพราะ repository เป็น private ให้ใช้ repository สาธารณะสำหรับโค้ดแอปเท่านั้นตามข้อจำกัด GitHub Free อย่าเผยแพร่ไฟล์ข้อมูลจริง
 
-ใช้ค่าจาก `render.yaml` และเพิ่ม Persistent Disk ในหน้าตั้งค่าบริการ อย่าบันทึกฐานข้อมูลไว้เฉพาะ filesystem ชั่วคราวของ container ต้องกำหนด `DATA_DIR` ตรงกับ mount path ของ disk ใช้หนึ่ง instance เท่านั้นสำหรับ SQLite นี้
+## 2. ทดลองหน้าเว็บทันที
 
-## ข้อควรทราบของลิงก์ร่วมกัน
+เปิด URL แล้วกด **ทดลองในเครื่องก่อน** จะมีข้อมูลสมมติ 12 รายการสำหรับลอง Dashboard, Filter, Import และ Export โหมดนี้เป็นข้อมูลเฉพาะ browser มีแถบแจ้งชัดเจนและยังส่งข้อมูลร่วมกันไม่ได้
 
-ผู้ถือ URL ดูและ Export ข้อมูล รวมถึงเพิ่มและอัปเดตผ่าน Excel ได้ทั้งหมด ไม่มี PIN ตามขอบเขตที่ยึดใช้ อย่าใส่ข้อมูลจริงใน GitHub หรือ Docker image และอย่าอัปโหลดไฟล์จริงเพื่อเป็น demo สาธารณะโดยไม่ต้องการให้ผู้ถือ URL เห็น
+## 3. สร้างฐานข้อมูลร่วมกันบน Supabase Free
 
-Persistent Disk ช่วยให้ข้อมูลอยู่หลัง restart/deploy แต่ควรสำรองแยกด้วย `scripts/backup.py` ไม่ถือว่าการเก็บบน disk เดียวเป็นการสำรองครบถ้วน
+เจ้าของระบบทำครั้งเดียว:
 
-## สถานะการส่งมอบ
+1. เข้า https://supabase.com/dashboard สมัคร/เข้าสู่ระบบ แล้วสร้าง Organization แบบ **Free** และสร้าง Project ตั้งชื่ออะไรก็ได้ เลือก region ใกล้ผู้ใช้ เช่น Singapore หากมี
+2. ตั้งรหัสผ่านฐานข้อมูลเก็บไว้เอง ไม่ต้องใส่ใน Harbor หรือส่งในแชต รอ Project พร้อมใช้งาน
+3. ใน Project เปิด **SQL Editor → New query**
+4. ที่หน้า Harbor กด **คัดลอก SQL สำหรับติดตั้ง** นำไปวางใน SQL Editor แล้วกด **Run** หรือคัดลอกไฟล์ supabase/schema.sql จาก GitHub ทั้งหมด
+5. หา **Project URL** และ **Publishable key** จากหน้า **Connect** หรือ **Settings → API Keys** ตามหน้าตาของ Supabase บัญชีนั้น หากใช้ legacy API key ให้เลือก **anon/public** เท่านั้น
+6. ใส่ Project URL และ Public key ในหน้า Harbor แล้วกด **สร้างพื้นที่ทำงานและลิงก์ทีม**
+7. เมื่อแถบด้านบนแสดง **ข้อมูลร่วมกัน · Supabase Free** ให้นำเข้า Excel และยืนยันบันทึก
+8. กด **คัดลอกลิงก์ทีม** ส่งให้เพื่อนร่วมงาน ลิงก์เต็มมี `#join=...` ทุกคนที่มีลิงก์นี้ใช้ข้อมูลเดียวกันได้และมีสิทธิ์อัปโหลด/อัปเดตด้วย
 
-โค้ดและคำสั่งทดสอบทำงานในสภาพแวดล้อมพัฒนาแล้ว ส่วน Blueprint ยังต้อง Deploy ในบัญชี Render ของผู้ใช้ ยังไม่มีการยืนยัน build, persistent disk หรือ URL สาธารณะบน Render จนกว่าจะทำขั้นตอนข้างต้นสำเร็จ
+การรัน SQL ซ้ำไม่ลบตารางหรือข้อมูลเดิม ห้ามใช้ service_role, sb_secret_ key หรือรหัสผ่านฐานข้อมูลในหน้าเว็บ อย่า commit ลิงก์ทีม/คีย์ส่วนตัว/ข้อมูลจริงใน repository
+
+## 4. ทดสอบก่อนใช้กับทีม
+
+- นำเข้าไฟล์ตัวอย่าง: ควรพบ 100 รายการใหม่ และ 1 แถวไม่สมบูรณ์ ต้องตรวจและยืนยันข้าม
+- หลังนำเข้าควรพบ 47 Jobs, 49 Invoices และ 91 หมายเลขตู้ ในข้อมูลชุดต้นฉบับ
+- เปิดลิงก์ทีมในเบราว์เซอร์อีกตัว ต้องเห็นข้อมูลตรงกัน
+- ลอง Filter ช่วงวันที่/Invoice, Export Excel/CSV และ Export PDF ผ่าน Save as PDF
+- ปิดแล้วเปิดลิงก์ทีมใหม่ ข้อมูลต้องยังอยู่ หากเพิ่งอัปเดตจากอีกเครื่องให้กดรีเฟรชหรือรอรอบ 30 วินาที
+
+## ข้อจำกัดที่ควรรู้
+
+- ค่าใช้จ่ายเป็นศูนย์เมื่อใช้ GitHub Pages สำหรับ public repository และ Supabase Free ภายในโควตา ไม่เลือก upgrade/add-on แบบเสียเงิน
+- Supabase Free อาจพักโปรเจกต์เมื่อไม่ได้ใช้งาน หากหน้าเว็บเชื่อมต่อไม่ได้ ให้เจ้าของเปิด Dashboard และ Resume ก่อน ไม่ต้องเพิ่ม Render หรือบัตรเพื่อแก้ปัญหานี้
+- โหมดทดลองในเครื่องและโหมดข้อมูลร่วมกันแยกกัน ข้อมูล localStorage จะไม่ถูกส่งขึ้นฐานข้อมูลอัตโนมัติ ต้องนำเข้า Excel ในพื้นที่ทำงานร่วมกัน
+- รุ่นนี้จำกัดข้อมูลสะสม 10,000 รายการเพื่อเหมาะกับระบบทดลองตามไฟล์ตัวอย่าง ไม่ใช่ระบบข้อมูลขนาดมหาศาล
+
+## สถานะการตรวจสอบ
+
+ทดสอบ static app, Web Worker อ่าน Excel, SQL RPC บน PostgreSQL จริง, สิทธิ์ anon, การใช้ร่วมกันสอง browser contexts และ Export แล้ว ส่วนการเปิด Pages และเชื่อม Supabase ที่ host จริงต้องทำในบัญชีผู้ใช้ จึงยังไม่อ้างว่าลิงก์สาธารณะและฐานข้อมูลของผู้ใช้พร้อมก่อนตั้งค่าสำเร็จ

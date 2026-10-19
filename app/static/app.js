@@ -80,6 +80,7 @@ const names = {
 };
 
 async function api(path, options = {}) {
+  if (window.HarborCloud?.enabled) return window.HarborCloud.api(path, options);
   const response = await fetch(path, options);
   if (!response.ok) {
     let message = "ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่";
@@ -564,12 +565,17 @@ async function exportReport(kind) {
   }
   try {
     toast("กำลังสร้างรายงานตามตัวกรอง…");
-    const response = await fetch("/api/export/" + kind + "?" + params());
-    if (!response.ok) {
-      const body = await response.json();
-      throw new Error(body.detail || "ส่งออกไม่สำเร็จ");
+    let blob;
+    if (window.HarborCloud?.enabled) {
+      blob = await window.HarborCloud.exportBlob(kind, params());
+    } else {
+      const response = await fetch("/api/export/" + kind + "?" + params());
+      if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body.detail || "ส่งออกไม่สำเร็จ");
+      }
+      blob = await response.blob();
     }
-    const blob = await response.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -672,6 +678,15 @@ $("#help-button").addEventListener("click", () => {
   $("#detail-dialog").showModal();
 });
 setInterval(() => {
-  if (!document.hidden && !$("dialog[open]")) refresh(true);
+  if (
+    !document.hidden &&
+    !$("dialog[open]") &&
+    (!window.HarborCloud?.enabled || window.HarborCloud.connected)
+  )
+    refresh(true);
 }, 30000);
-refresh(true);
+if (window.HarborCloud?.enabled) {
+  window.HarborCloud.start(() => refresh(true));
+} else {
+  refresh(true);
+}

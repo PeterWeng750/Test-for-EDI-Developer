@@ -355,7 +355,7 @@ def export(kind: str, request: Request):
         fields = all_fields(conn)
     # Keep the source receipt column as well as the two parsed dates for round-trip imports.
     fields = [k for k, _ in FIELDS if k != 'declaration_status'] + [k for k in fields if k not in dict(FIELDS)]
-    headers = [label(k) for k in fields]
+    headers = [safe_cell(label(k)) for k in fields]
     data = [[safe_cell(r.get(k, '')) for k in fields] for r in rows]
     if kind == 'csv':
         buffer = io.StringIO(newline='')

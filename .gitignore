@@ -6,3 +6,5 @@ data/
 test-results/
 *.sqlite3*
 .pytest_cache/
+dist/
+node_modules/
